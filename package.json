@@ -1,0 +1,17 @@
+{
+  "name": "gerar_grafico_apa",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "gerar_graficos": "node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "canvas": "^2.11.2",
+    "chartjs-node-canvas": "^4.1.6",
+    "yargs": "^17.7.2"
+  }
+}
