@@ -45,6 +45,11 @@ const commonOptions = {
     },
     scales: {
         x: {
+            title: {
+                display: true,
+                text: 'Número da Execução',
+                color: 'black'
+            },
             grid: {
                 color: 'rgba(0, 0, 0, 0.1)',
                 borderColor: 'rgba(0, 0, 0, 0.1)',
@@ -52,6 +57,11 @@ const commonOptions = {
             }
         },
         y: {
+            title: {
+                display: true,
+                text: 'Tempo de Execução (ns)',
+                color: 'black'
+            },
             grid: {
                 color: 'rgba(0, 0, 0, 0.1)',
                 borderColor: 'rgba(0, 0, 0, 0.1)',
@@ -73,15 +83,22 @@ Object.keys(groupedData).forEach((key) => {
         data: {
             labels: Array.from({ length: groupedData[key].length }, (_, i) => i + 1),
             datasets: [{
-                label: `Disorder ${disorder}, Pivot Type ${pivotType}`,
+                label: `Desordem ${disorder}, Tipo de Pivô ${pivotType}`,
                 data: groupedData[key],
                 fill: false,
                 borderColor: 'blue',
-                backgroundColor: 'blue', // Agora a cor de fundo coincide com a cor da linha
+                backgroundColor: 'blue',
                 tension: 0.1
             }]
         },
-        options: commonOptions
+        options: {
+            ...commonOptions,
+            title: {
+                display: true,
+                text: `Tempo de Execução do Algoritmo Quicksort para Desordem ${disorder} e Tipo de Pivô ${pivotType}`,
+                color: 'black'
+            }
+        }
     };
 
     chartJSNodeCanvas.renderToBuffer(configuration).then((buffer) => {
