@@ -14,9 +14,20 @@ const argv = yargs
 const data = fs.readFileSync(argv.input, 'utf8');
 const lines = data.split('\n');
 const processedData = lines.map(line => {
-    const [length, disorder, , iteration, , , , , pivotType, , time] = line.split(' ');
+    // Use uma expressão regular para extrair os valores desejados
+    const match = line.match(/Length: (\d+) Disorder: ([\d,]+) Iteration: (\d+) Pivot type: (\d+) took (\d+) ns/);
+
+    // Se não houver correspondência, retorne null ou um objeto vazio, dependendo dos requisitos
+    if (!match) {
+        return null; // ou return {};
+    }
+
+    // Extrai os valores correspondentes
+    const [, length, disorder, iteration, pivotType, time] = match;
+
+    // Retorna um novo objeto com os valores desejados
     return {
-        length,
+        tamanho: `${length}`,
         disorder,
         iteration,
         pivotType,
@@ -24,10 +35,10 @@ const processedData = lines.map(line => {
     };
 });
 
-const groupedData = processedData.reduce((acc, curr) => {
-    const key = `${curr.disorder}-${curr.pivotType}`;
 
-    if (curr.length && curr.disorder && curr.iteration && curr.pivotType && curr.time) {
+const groupedData = processedData.reduce((acc, curr) => {
+    if (curr && curr.disorder && curr.pivotType && curr.time) {
+        const key = `${curr.disorder}-${curr.pivotType}-${curr.tamanho}`;
         acc[key] = acc[key] || [];
         acc[key].push(curr.time);
     }
@@ -77,13 +88,14 @@ const backgroundColour = 'white';
 const chartJSNodeCanvas = new ChartJSNodeCanvas({ width, height, backgroundColour});
 
 Object.keys(groupedData).forEach((key) => {
-    const [disorder, pivotType] = key.split('-');
+    console.log(key)
+    const [disorder, pivotType, tamanho] = key.split('-');
     const configuration = {
         type: 'line',
         data: {
             labels: Array.from({ length: groupedData[key].length }, (_, i) => i + 1),
             datasets: [{
-                label: `Desordem ${disorder}, Tipo de Pivô ${pivotType}`,
+                label: `Desordem ${disorder}, Tamanho ${parseInt(tamanho)}, Tipo de Pivô ${pivotType}`, // Convertendo tamanho para número
                 data: groupedData[key],
                 fill: false,
                 borderColor: 'blue',
@@ -103,8 +115,8 @@ Object.keys(groupedData).forEach((key) => {
 
     chartJSNodeCanvas.renderToBuffer(configuration).then((buffer) => {
         // Salvando a imagem como um arquivo PNG
-        fs.writeFileSync(`chart-${disorder}-${pivotType}.png`, buffer);
-        console.log(`Chart saved as chart-${disorder}-${pivotType}.png`);
+        fs.writeFileSync(`chart-${disorder}-${pivotType}-${tamanho}.png`, buffer); // Incluindo tamanho no nome do arquivo
+        console.log(`Chart saved as chart-${disorder}-${pivotType}-${tamanho}.png`);
     }).catch((err) => {
         console.error(err);
     });
