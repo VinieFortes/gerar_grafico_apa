@@ -88,7 +88,6 @@ const backgroundColour = 'white';
 const chartJSNodeCanvas = new ChartJSNodeCanvas({ width, height, backgroundColour});
 
 Object.keys(groupedData).forEach((key) => {
-    console.log(key)
     const [disorder, pivotType, tamanho] = key.split('-');
     const configuration = {
         type: 'line',
